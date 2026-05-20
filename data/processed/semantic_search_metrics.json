@@ -1,0 +1,45 @@
+{
+  "config": {
+    "top_k_saved_candidates": 5,
+    "evaluation_ks": [
+      1,
+      3,
+      5
+    ],
+    "corpus_input_path": "c:\\Users\\pietr\\Documents\\ai-invoice-matching\\ai-invoice-matching\\data\\processed\\corpus_embeddings.jsonl",
+    "query_input_path": "c:\\Users\\pietr\\Documents\\ai-invoice-matching\\ai-invoice-matching\\data\\processed\\query_embeddings.jsonl",
+    "results_output_path": "c:\\Users\\pietr\\Documents\\ai-invoice-matching\\ai-invoice-matching\\data\\processed\\semantic_search_results.jsonl",
+    "metrics_output_path": "c:\\Users\\pietr\\Documents\\ai-invoice-matching\\ai-invoice-matching\\data\\processed\\semantic_search_metrics.json"
+  },
+  "checks": {
+    "corpus_records": 7000,
+    "query_records": 2100,
+    "embedding_dimension": 384,
+    "duplicate_record_ids_checked": true,
+    "queries_without_match_in_corpus": 0,
+    "queries_without_match_examples": []
+  },
+  "overall": {
+    "query_count": 2100,
+    "top_1_accuracy": 0.9876190476190476,
+    "top_3_accuracy": 0.9904761904761905,
+    "top_5_accuracy": 0.9904761904761905,
+    "mrr": 0.9893301237494004
+  },
+  "by_evaluation_split": {
+    "test": {
+      "query_count": 1050,
+      "top_1_accuracy": 0.9866666666666667,
+      "top_3_accuracy": 0.9895238095238095,
+      "top_5_accuracy": 0.9895238095238095,
+      "mrr": 0.9883291277587042
+    },
+    "validation": {
+      "query_count": 1050,
+      "top_1_accuracy": 0.9885714285714285,
+      "top_3_accuracy": 0.9914285714285714,
+      "top_5_accuracy": 0.9914285714285714,
+      "mrr": 0.9903311197400961
+    }
+  }
+}
