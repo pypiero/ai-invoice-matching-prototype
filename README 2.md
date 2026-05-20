@@ -319,12 +319,57 @@ Il motivo e' strutturale: `product_description_replace` sostituisce la descrizio
 
 In un contesto reale, se le descrizioni prodotto nelle fatture noisy restano quelle originali (anche con altri errori), la baseline e' gia' sufficiente. Se invece le descrizioni vengono modificate o riclassificate, i 26 fallimenti rappresentano il limite naturale di questo approccio e richiederebbero un reranking con segnali strutturati come numero fattura, importo o data, gestito lato SAP.
 
+## BM25 baseline
+
+Il notebook per la baseline BM25 si trova in:
+
+`notebooks/bm25_baseline.ipynb`
+
+Il notebook legge gli stessi file di input della semantic search baseline:
+
+- `data/processed/embedding_corpus.jsonl`
+- `data/processed/embedding_queries.jsonl`
+
+e produce:
+
+- `data/processed/bm25_results.jsonl`
+- `data/processed/bm25_metrics.json`
+
+Usa `BM25Okapi` dalla libreria `rank-bm25`, la variante piu' citata in letteratura nei confronti con approcci neurali. La tokenizzazione e' intenzionalmente semplice — lowercase e split su spazi, senza stemming ne' rimozione di stopword — per mantenere il confronto con gli embeddings il piu' diretto possibile. L'input e' lo stesso `embedding_text` usato per gli embeddings: stessa rappresentazione, metodo diverso.
+
+Il notebook include una sezione di confronto diretto che legge `semantic_search_metrics.json` e affianca le metriche dei due approcci su tutti gli split e i livelli di rumore.
+
+### Risultati e confronto
+
+BM25 ottiene il 100% su tutte le metriche e su tutti i livelli di rumore:
+
+| Modello | Query | Top-1 acc. | Top-3 acc. | Top-5 acc. | MRR |
+|---|---:|---:|---:|---:|---:|
+| BM25 | 2.100 | 100,0% | 100,0% | 100,0% | 100,0% |
+| Embeddings | 2.100 | 98,8% | 99,0% | 99,0% | 98,9% |
+
+| Modello | Noise level | Query | Top-1 acc. | MRR |
+|---|---|---:|---:|---:|
+| BM25 | `low` | 1.465 | 100,0% | 100,0% |
+| Embeddings | `low` | 1.465 | 99,8% | 99,8% |
+| BM25 | `medium` | 415 | 100,0% | 100,0% |
+| Embeddings | `medium` | 415 | 98,8% | 98,9% |
+| BM25 | `high` | 220 | 100,0% | 100,0% |
+| Embeddings | `high` | 220 | 91,8% | 93,1% |
+
+### Lettura del risultato
+
+Il vantaggio di BM25 su questo dataset e' spiegabile dalla struttura degli errori sintetici. Nomi azienda e indirizzi sono token molto distintivi e restano invariati anche nei casi `high`: BM25 li pesa molto nel punteggio finale e non si fa distrarre dalle descrizioni prodotto sostituite. Gli embeddings invece rappresentano l'intero testo come un unico vettore denso — quando le descrizioni cambiano, il vettore si sposta abbastanza da sbagliare il match.
+
+Questo non significa che BM25 sia sempre superiore. Su un dataset reale con nomi azienda simili, abbreviazioni sistematiche, variazioni lessicali non lessicalmente identiche o testi in lingue diverse, il vantaggio lessicale di BM25 si ridurrebbe o si invertirebbe. Gli embeddings sono piu' robusti su variazioni semantiche che non cambiano il significato ma cambiano la forma — esattamente il tipo di rumore piu' comune nei processi reali di invoice matching. In questo dataset sintetico, quel tipo di rumore non e' abbastanza pervasivo da far emergere il vantaggio degli embeddings.
+
 ## Note
 
 Il progetto e' volutamente semplice e didattico. L'EDA usa soprattutto `pandas` e `matplotlib`, con codice leggibile e commenti essenziali.
 
-Prossimi sviluppi naturali:
+Prossimi sviluppi naturali per chi volesse estendere il progetto:
 
-- confrontare questa baseline con BM25 o hybrid search;
-- usare campi numerici, date e identificativi come metadata per filtri o reranking gestiti da SAP, non come contenuto principale dell'embedding;
-- esporre il retrieval tramite API solo dopo aver validato bene il comportamento locale.
+- testare su un dataset reale con fatture piu' simili tra loro, dove BM25 e gli embeddings si comporterebbero diversamente;
+- introdurre un approccio ibrido che combina il punteggio BM25 con la similarity coseno degli embeddings;
+- usare campi numerici, date e identificativi come metadata per filtri o reranking gestiti lato SAP, non come contenuto principale del retrieval;
+- esporre il retrieval tramite una API REST dopo aver validato il comportamento locale.

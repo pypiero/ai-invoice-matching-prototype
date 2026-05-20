@@ -1,0 +1,55 @@
+{
+  "config": {
+    "top_k": 5,
+    "tokenization": "lowercase + split",
+    "bm25_variant": "BM25Okapi",
+    "corpus_input_path": "c:\\Users\\pietr\\Documents\\ai-invoice-matching\\ai-invoice-matching\\data\\processed\\embedding_corpus.jsonl",
+    "query_input_path": "c:\\Users\\pietr\\Documents\\ai-invoice-matching\\ai-invoice-matching\\data\\processed\\embedding_queries.jsonl"
+  },
+  "overall": {
+    "query_count": 2100,
+    "top_1_accuracy": 1.0,
+    "top_3_accuracy": 1.0,
+    "top_5_accuracy": 1.0,
+    "mrr": 1.0
+  },
+  "by_evaluation_split": {
+    "test": {
+      "query_count": 1050,
+      "top_1_accuracy": 1.0,
+      "top_3_accuracy": 1.0,
+      "top_5_accuracy": 1.0,
+      "mrr": 1.0
+    },
+    "validation": {
+      "query_count": 1050,
+      "top_1_accuracy": 1.0,
+      "top_3_accuracy": 1.0,
+      "top_5_accuracy": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "by_noise_level": {
+    "low": {
+      "query_count": 1465,
+      "top_1_accuracy": 1.0,
+      "top_3_accuracy": 1.0,
+      "top_5_accuracy": 1.0,
+      "mrr": 1.0
+    },
+    "medium": {
+      "query_count": 415,
+      "top_1_accuracy": 1.0,
+      "top_3_accuracy": 1.0,
+      "top_5_accuracy": 1.0,
+      "mrr": 1.0
+    },
+    "high": {
+      "query_count": 220,
+      "top_1_accuracy": 1.0,
+      "top_3_accuracy": 1.0,
+      "top_5_accuracy": 1.0,
+      "mrr": 1.0
+    }
+  }
+}
